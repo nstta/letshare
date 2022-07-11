@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "50805362113",
+    "project_id": "letshare-623b7",
+    "storage_bucket": "letshare-623b7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:50805362113:android:bb5df58baef76c83147340",
+        "android_client_info": {
+          "package_name": "com.example.letshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "50805362113-gkaka9m9tpnh41d112hie8mtekh2dl9n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuUh22n0c0JYid7yuIF0dnvGV5-fu9W7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "50805362113-gkaka9m9tpnh41d112hie8mtekh2dl9n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
