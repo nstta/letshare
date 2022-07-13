@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:letshare/model/user_model.dart';
+import 'package:letshare/screen/home.dart';
 import 'package:letshare/screen/welcome.dart';
 
 class SignupPage extends StatefulWidget {
@@ -397,6 +398,6 @@ class _SignupPageState extends State<SignupPage> {
     Fluttertoast.showToast(msg: "Account created successfully :) ");
 
     Navigator.pushAndRemoveUntil((context),
-        MaterialPageRoute(builder: (context) => Welcome()), (route) => false);
+        MaterialPageRoute(builder: (context) => Homescreen()), (route) => false);
   }
 }

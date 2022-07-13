@@ -5,7 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:letshare/model/user_model.dart';
+import 'package:letshare/screen/challenge.dart';
 import 'package:letshare/screen/login.dart';
 
 class Welcome extends StatefulWidget {
@@ -34,10 +36,10 @@ class _WelcomeState extends State<Welcome> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome"),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   title: Text("Welcome"),
+      //   centerTitle: true,
+      // ),
       body: Center(
           child: Padding(
         padding: EdgeInsets.all(20),
@@ -75,6 +77,24 @@ class _WelcomeState extends State<Welcome> {
               SizedBox(
                 height: 15,
               ),
+              ElevatedButton(
+                onPressed: () {
+                   Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Challenges()));
+                }, 
+                style: ElevatedButton.styleFrom(
+                    primary: Colors.purple,
+                    shape: new RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(30.0),
+                  ),),
+                child: Text('CREATE CHALLENGE',
+                style: GoogleFonts.balooTamma(
+                                  textStyle: TextStyle(
+                                      fontSize: 12,
+                                      color:
+                                          Color.fromARGB(255, 230, 230, 230))),),),
               ActionChip(
                   label: Text('Logout'),
                   onPressed: () {

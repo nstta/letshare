@@ -1,7 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:letshare/model/challenge_model.dart';
+import 'package:letshare/model/user_model.dart';
+import 'package:letshare/screen/challenge.dart';
+import 'package:letshare/screen/detail.dart';
+import 'package:letshare/screen/login.dart';
+import 'package:thebrioflashynavbar/thebrioflashynavbar.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({Key? key}) : super(key: key);
@@ -11,6 +19,61 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+  ChallengeModel detailInChallenge = ChallengeModel();
+  void initState() {
+    super.initState();
+    getinfo();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      this.loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+    // Navigator.pop(context);  // pop current page
+    // Navigator.push(
+    //                                   context,
+    //                                   MaterialPageRoute(
+    //                                       builder: (context) => Homescreen()));
+  }
+
+  
+
+  List<String> name = [];
+  List<String> photo = [];
+  List<String> target = [];
+  List<String> end_date = [];
+  List<String> province = [];
+  List<String> description = [];
+  int cc = 0;
+  Future getinfo() async {
+    var dbpp = FirebaseFirestore.instance.collection('challenge').snapshots();
+    QuerySnapshot<Map<String, dynamic>> recpp = await dbpp.first;
+    recpp.docs.forEach((e) {
+      // print(e.data()['photo']);
+      name.add(e.data()['name'].toString());
+      photo.add(e.data()['photo'].toString());
+      target.add(e.data()['target'].toString());
+      end_date.add(e.data()['end_date'].toString());
+      province.add(e.data()['province'].toString());
+      description.add(e.data()['description'].toString());
+
+      setState(() {});
+    });
+
+    // print(name);
+    // print(photo);
+    // print(target);
+    // print(end_date);
+    // print(province);
+    // print(description);
+  }
+
+  
+
   String dropdownValue = 'END SOON';
   var items = [
     'END SOON',
@@ -18,16 +81,13 @@ class _HomescreenState extends State<Homescreen> {
     'THIS MONTH',
     'THIS YEAR',
   ];
-
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     double w = MediaQuery.of(context).size.width;
     double h = MediaQuery.of(context).size.height;
 
     final _formKey = GlobalKey<FormState>();
 
-    // editing controller
     final TextEditingController searchController = new TextEditingController();
 
     final searchField = TextFormField(
@@ -64,353 +124,438 @@ class _HomescreenState extends State<Homescreen> {
       ),
     );
 
-    const titleText = Padding(
-      padding: EdgeInsets.all(5),
-      child: Text(
-        'Help donate school uniforms',
-        style: TextStyle(
-          fontFamily: 'Baloo Tamma 2',
-          fontSize: 15,
-        ),
-      ),
-    );
-
-    const descTextStyle = TextStyle(
-      color: Colors.black,
-      fontWeight: FontWeight.w800,
-      fontFamily: 'Baloo Tamma 2',
-      fontSize: 12,
-    );
-
-    // DefaultTextStyle.merge() allows you to create a default text
-    // style that is inherited by its child and all subsequent children.
-    final time = DefaultTextStyle.merge(
-      style: descTextStyle,
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Icon(Icons.access_time, color: Colors.grey, size: 10,),
-                const Text('PREP12356:'),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-
-    final place = DefaultTextStyle.merge(
-      style: descTextStyle,
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Icon(Icons.location_on, color: Colors.grey, size: 10,),
-                const Text('PREP12356:'),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-
-    final rightColumn = Container(
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-      child: Column(
-        children: [titleText, time, place],
-      ),
-    );
-
     final mainImage = Image.asset(
       'img/act.jpg',
       fit: BoxFit.cover,
     );
 
     return Scaffold(
-        // appBar: AppBar(backgroundColor: Color.fromARGB(255, 69, 180, 254)),
-        body: Column(children: <Widget>[
-      Container(
-        // height: size.height * 0.2,
-        child: Stack(
+      body: SingleChildScrollView(
+        child: Column(
           children: <Widget>[
             Container(
-              height: 392,
-              decoration:
-                  BoxDecoration(color: Color.fromARGB(255, 69, 180, 254)),
+                // height: size.height * 0.2,
+                child: Stack(
+                    // clipBehavior: Clip.none,
+                    children: <Widget>[
+                  Container(
+                      height: 392,
+                      decoration: BoxDecoration(color: Colors.blue)),
+                  Container(
+                      margin: const EdgeInsets.only(top: 40, left: 30),
+                      width: w,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Hi, ${loggedInUser.username}",
+                              style: GoogleFonts.balooTamma(
+                                  textStyle: TextStyle(
+                                      fontSize: 25, color: Colors.white)),
+                            ),
+                            Text(
+                              "Let's start to donating..",
+                              style: GoogleFonts.balooTamma(
+                                  textStyle: TextStyle(
+                                      fontSize: 12,
+                                      color:
+                                          Color.fromARGB(255, 230, 230, 230))),
+                            ),
+                          ])),
+                  Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 90),
+                      child: Padding(
+                        padding: const EdgeInsets.all(36.0),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                              SizedBox(
+                                width: 200,
+                                child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => Challenges()));
+                              }, 
+                              style: ElevatedButton.styleFrom(
+                                  primary: Color.fromARGB(125, 255, 255, 255),
+                                  shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(30.0),
+                                ),),
+                              child: Text('CREATE CHALLENGE',
+                              style: GoogleFonts.balooTamma(
+                                                textStyle: TextStyle(
+                                                    fontSize: 18,
+                                                    color:
+                                                        Color.fromARGB(255, 230, 230, 230))),),),
+                              ),
+                                SizedBox(height: 25),
+                              ]),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                      margin:
+                          const EdgeInsets.only(top: 220, left: 30, right: 30),
+                      width: w,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Categories",
+                              style: GoogleFonts.balooTamma(
+                                  textStyle: TextStyle(
+                                      fontSize: 15, color: Colors.white)),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Expanded(
+                                      child: Padding(
+                                          padding: EdgeInsets.all(8),
+                                          child: Column(children: <Widget>[
+                                            Image.asset(
+                                              'img/caticon.png',
+                                              fit: BoxFit.contain,
+                                            ),
+                                            Text(
+                                              'stationery',
+                                              style: GoogleFonts.balooTamma(
+                                                  textStyle: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.white)),
+                                            )
+                                          ]))),
+                                  Expanded(
+                                      child: Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Image.asset(
+                                          'img/caticon.png',
+                                          fit: BoxFit.contain,
+                                        ),
+                                        Text(
+                                          'uniform',
+                                          style: GoogleFonts.balooTamma(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.white)),
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                                  Expanded(
+                                      child: Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Image.asset(
+                                          'img/caticon.png',
+                                          fit: BoxFit.contain,
+                                        ),
+                                        Text('book',
+                                            style: GoogleFonts.balooTamma(
+                                                textStyle: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white))),
+                                      ],
+                                    ),
+                                  )),
+                                  Expanded(
+                                      child: Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Image.asset(
+                                          'img/caticon.png',
+                                          fit: BoxFit.contain,
+                                        ),
+                                        Text(
+                                          'see all',
+                                          style: GoogleFonts.balooTamma(
+                                              textStyle: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.white)),
+                                        )
+                                      ],
+                                    ),
+                                  )),
+                                ])
+                          ])),
+                ])),
+            Container(
+              margin: const EdgeInsets.only(top: 20, left: 30),
+              width: w,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Trending Donation",
+                      style: GoogleFonts.balooTamma(
+                          textStyle: TextStyle(
+                              fontSize: 17,
+                              color: Color.fromARGB(255, 42, 48, 106))),
+                    ),
+                  ]),
             ),
             Container(
-                margin: const EdgeInsets.only(top: 40, left: 30),
+                margin: const EdgeInsets.only(right: 30),
                 width: w,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
                       Text(
-                        "Hi, Nattamon",
-                        style: GoogleFonts.balooTamma(
-                            textStyle:
-                                TextStyle(fontSize: 25, color: Colors.white)),
-                      ),
-                      Text(
-                        "Let's start to donating..",
+                        "Event",
                         style: GoogleFonts.balooTamma(
                             textStyle: TextStyle(
                                 fontSize: 12,
-                                color: Color.fromARGB(255, 230, 230, 230))),
+                                color: Color.fromARGB(255, 255, 255, 255))),
                       ),
-                    ])),
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: 90),
-                child: Padding(
-                  padding: const EdgeInsets.all(36.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          searchField,
-                          SizedBox(height: 25),
-                        ]),
-                  ),
-                ),
-              ),
-            ),
-            Container(
-                margin: const EdgeInsets.only(top: 220, left: 30, right: 30),
-                width: w,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Categories",
-                        style: GoogleFonts.balooTamma(
-                            textStyle:
-                                TextStyle(fontSize: 15, color: Colors.white)),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      Column(
                         children: [
-                          Expanded(
-                              child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Image.asset(
-                                  'img/caticon.png',
-                                  fit: BoxFit.contain,
-                                ),
-                                Text(
-                                  'stationery',
-                                  style: GoogleFonts.balooTamma(
-                                      textStyle: TextStyle(
-                                          fontSize: 12, color: Colors.white)),
-                                )
-                              ],
+                          DropdownButton(
+                            value: dropdownValue,
+                            icon: Icon(
+                              Icons.keyboard_arrow_down,
+                              color: Colors.grey,
                             ),
-                          )),
-                          Expanded(
-                              child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Image.asset(
-                                  'img/caticon.png',
-                                  fit: BoxFit.contain,
-                                ),
-                                Text(
-                                  'uniform',
-                                  style: GoogleFonts.balooTamma(
-                                      textStyle: TextStyle(
-                                          fontSize: 12, color: Colors.white)),
-                                )
-                              ],
+                            items: items.map((String items) {
+                              return DropdownMenuItem(
+                                value: items,
+                                child: Text(items),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownValue = newValue!;
+                              });
+                            },
+                            style: GoogleFonts.balooTamma(
+                                textStyle: TextStyle(
+                                    fontSize: 12, color: Colors.grey)),
+                            underline: Container(
+                              height: 1.0,
+                              decoration: const BoxDecoration(
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          color: Colors.transparent,
+                                          width: 0.0))),
                             ),
-                          )),
-                          Expanded(
-                              child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Image.asset(
-                                  'img/caticon.png',
-                                  fit: BoxFit.contain,
-                                ),
-                                Text('book',
-                                    style: GoogleFonts.balooTamma(
-                                        textStyle: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.white))),
-                              ],
-                            ),
-                          )),
-                          Expanded(
-                              child: Padding(
-                            padding: EdgeInsets.all(8),
-                            child: Column(
-                              children: <Widget>[
-                                Image.asset(
-                                  'img/caticon.png',
-                                  fit: BoxFit.contain,
-                                ),
-                                Text(
-                                  'see all',
-                                  style: GoogleFonts.balooTamma(
-                                      textStyle: TextStyle(
-                                          fontSize: 12, color: Colors.white)),
-                                )
-                              ],
-                            ),
-                          )),
+                          ),
                         ],
-                      )
+                      ),
                     ])),
-          ],
-        ),
-      ),
-      Container(
-        margin: const EdgeInsets.only(top: 20, left: 30),
-        width: w,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            "Trending Donation",
-            style: GoogleFonts.balooTamma(
-                textStyle: TextStyle(
-                    fontSize: 17, color: Color.fromARGB(255, 42, 48, 106))),
-          ),
-        ]),
-      ),
-      Container(
-        margin: const EdgeInsets.only(right: 30),
-        width: w,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              "Event",
-              style: GoogleFonts.balooTamma(
-                  textStyle: TextStyle(
-                      fontSize: 12, color: Color.fromARGB(255, 255, 255, 255))),
-            ),
-            Column(
-              children: [
-                DropdownButton(
-                  value: dropdownValue,
-                  icon: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.grey,
-                  ),
-                  items: items.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      dropdownValue = newValue!;
-                    });
-                  },
-                  style: GoogleFonts.balooTamma(
-                      textStyle: TextStyle(fontSize: 12, color: Colors.grey)),
-                  underline: Container(
-                    height: 1.0,
-                    decoration: const BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                color: Colors.transparent, width: 0.0))),
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-      Container(
-        height: 230,
-        child: Stack(
-          children: [
-          Positioned(
-              top: 35,
+            Container(
+                child: Positioned(
               left: 30,
               right: 30,
-              child: Material(
-                child: Container(
-                  height: 140.0,
-                  width: 327,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        offset: const Offset(
-                          5.0,
-                          5.0,
+              child: Container(
+                child: Column(
+                  children: <Widget>[
+                    ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height,
+                          maxWidth: 327,
                         ),
-                        blurRadius: 10.0,
-                        spreadRadius: 2.0,
-                      ), //BoxShadow
-                      BoxShadow(
-                        color: Colors.white,
-                        offset: const Offset(0.0, 0.0),
-                        blurRadius: 0.0,
-                        spreadRadius: 0.0,
-                      ),
-                       //BoxShadow
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                      child: mainImage,
-                      ),
-                      Positioned(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text('Help donate school uniforms'),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(Icons.access_time, color: Colors.grey, size: 10,),
-                                const Text('PREP12356:'),
-                              ],
-                            ),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(Icons.access_time, color: Colors.grey, size: 10,),
-                                const Text('PREP12356:'),
-                              ],
-                            ),
-                           Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(Icons.access_time, color: Colors.grey, size: 10,),
-                                const Text('PREP12356:'),
-                              ],
-                            )
+                        child: ListView.builder(
+                          itemCount: name.length,
+                          itemBuilder: (context, index) {
+                            // print('object');
+                            // print(name[index]);
 
-                          ],
-                        ))
-                    ],
-                  ),
+                            return Container(
+                              height: 150,
+                              padding: EdgeInsets.only(bottom: 10),
+                              child: Card(
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  elevation: 8,
+                                  child: InkWell(
+                                    onTap: () {
+                                      print(
+                                          '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+                                      print(name[index]);
+                                      print(
+                                          '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Detail(
+                                                  name: name[index],
+                                                  description:
+                                                      description[index],
+                                                  province: province[index],
+                                                )),
+                                      );
+                                    },
+                                    child: Container(
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                  child: Image.asset(
+                                                      'img/act.jpg',
+                                                      fit: BoxFit.cover))),
+                                          Container(
+                                              padding: EdgeInsets.all(10),
+                                              child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  children: [
+                                                    Text(
+                                                      name[index],
+                                                      style: GoogleFonts
+                                                          .balooTamma(
+                                                              textStyle: TextStyle(
+                                                                  fontSize: 15,
+                                                                  color: Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          88,
+                                                                          88,
+                                                                          88))),
+                                                    ),
+                                                    Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    right: 5),
+                                                            child: Icon(
+                                                              Icons
+                                                                  .access_time_outlined,
+                                                              color:
+                                                                  Colors.black,
+                                                              size: 18,
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            end_date[index],
+                                                            style: TextStyle(
+                                                              color: Color
+                                                                  .fromARGB(
+                                                                      255,
+                                                                      135,
+                                                                      135,
+                                                                      135),
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800,
+                                                              fontFamily:
+                                                                  'Baloo Tamma 2',
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ]),
+                                                    Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  right: 5),
+                                                          child: Icon(
+                                                            Icons.location_on,
+                                                            color: Colors.black,
+                                                            size: 16,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          province[index],
+                                                          style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    135,
+                                                                    135,
+                                                                    135),
+                                                            fontWeight:
+                                                                FontWeight.w800,
+                                                            fontFamily:
+                                                                'Baloo Tamma 2',
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Container(
+                                                              height: 5.0,
+                                                              width: 160.0,
+                                                              decoration: BoxDecoration(
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          231,
+                                                                          231,
+                                                                          231,
+                                                                          100),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              30)),
+                                                            ),
+                                                            Container(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 10),
+                                                              child: Text(
+                                                                '0 %',
+                                                                style: GoogleFonts.balooTamma(
+                                                                    textStyle: TextStyle(
+                                                                        fontSize:
+                                                                            12,
+                                                                        color: Color.fromARGB(
+                                                                            255,
+                                                                            92,
+                                                                            92,
+                                                                            92))),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      ],
+                                                    )
+                                                  ]))
+                                        ],
+                                      ),
+                                    ),
+                                  )),
+                            );
+                          },
+                        )),
+                  ],
                 ),
-              )),
-        ]),
-      )
-    ]));
+              ),
+            )),
+          ],
+        ),
+      ),
+    );
   }
 }
