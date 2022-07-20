@@ -223,10 +223,13 @@ class _HomescreenState extends State<Homescreen> {
                                   Expanded(
                                       child: Padding(
                                           padding: EdgeInsets.all(8),
+                                          
                                           child: Column(children: <Widget>[
                                             Image.asset(
-                                              'img/caticon.png',
+                                              'img/stationary.png',
+                                             
                                               fit: BoxFit.contain,
+                                            
                                             ),
                                             Text(
                                               'stationery',
@@ -242,7 +245,7 @@ class _HomescreenState extends State<Homescreen> {
                                     child: Column(
                                       children: <Widget>[
                                         Image.asset(
-                                          'img/caticon.png',
+                                          'img/uniform.png',
                                           fit: BoxFit.contain,
                                         ),
                                         Text(
@@ -261,7 +264,7 @@ class _HomescreenState extends State<Homescreen> {
                                     child: Column(
                                       children: <Widget>[
                                         Image.asset(
-                                          'img/caticon.png',
+                                          'img/book.png',
                                           fit: BoxFit.contain,
                                         ),
                                         Text('book',
@@ -278,7 +281,7 @@ class _HomescreenState extends State<Homescreen> {
                                     child: Column(
                                       children: <Widget>[
                                         Image.asset(
-                                          'img/caticon.png',
+                                          'img/all.png',
                                           fit: BoxFit.contain,
                                         ),
                                         Text(
